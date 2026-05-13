@@ -1,5 +1,8 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 type Product = {
   id: string;
   name: string;
@@ -9,6 +12,17 @@ type Product = {
 };
 
 export default function ProductTable({ products }: { products: Product[] }) {
+  const router = useRouter();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('¿Seguro que quieres eliminar este producto?')) return;
+    setDeletingId(id);
+    await fetch(`/api/products/${id}`, { method: 'DELETE' });
+    setDeletingId(null);
+    router.refresh();
+  };
+
   if (products.length === 0) {
     return (
       <p style={{ color: 'var(--text-3)', fontFamily: 'var(--mono)', fontSize: '0.85rem' }}>
@@ -22,8 +36,8 @@ export default function ProductTable({ products }: { products: Product[] }) {
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
-            {['Nombre', 'Categoría', 'Precio', 'Stock'].map((h) => (
-              <th key={h} style={{
+            {['Nombre', 'Categoría', 'Precio', 'Stock', ''].map((h, i) => (
+              <th key={i} style={{
                 padding: '0.75rem 1.25rem',
                 textAlign: 'left',
                 fontFamily: 'var(--mono)',
@@ -45,10 +59,7 @@ export default function ProductTable({ products }: { products: Product[] }) {
               style={{
                 background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)',
                 borderBottom: '1px solid var(--border)',
-                transition: 'background 0.15s',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--accent-dim)')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)')}
             >
               <td style={{ padding: '0.85rem 1.25rem', fontWeight: 600, color: 'var(--text-1)' }}>
                 {p.name}
@@ -81,6 +92,25 @@ export default function ProductTable({ products }: { products: Product[] }) {
                 }}>
                   {p.stock}
                 </span>
+              </td>
+              <td style={{ padding: '0.85rem 1.25rem' }}>
+                <button
+                  onClick={() => handleDelete(p.id)}
+                  disabled={deletingId === p.id}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid var(--red)',
+                    color: 'var(--red)',
+                    borderRadius: 5,
+                    padding: '0.3rem 0.7rem',
+                    fontFamily: 'var(--mono)',
+                    fontSize: '0.75rem',
+                    cursor: deletingId === p.id ? 'not-allowed' : 'pointer',
+                    opacity: deletingId === p.id ? 0.5 : 1,
+                  }}
+                >
+                  {deletingId === p.id ? '...' : 'Eliminar'}
+                </button>
               </td>
             </tr>
           ))}
