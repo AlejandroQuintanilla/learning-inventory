@@ -3,6 +3,13 @@
 Aplicación de gestión de inventario construida con **Next.js 14**, **Neon Postgres** y **Drizzle ORM**.  
 Práctica de fundamentos de bases de datos relacionales — CFGS ASIR.
 
+## 🔗 Enlaces del proyecto
+
+| | URL |
+|--|--|
+| **Frontend (Vercel)** | https://learning-inventory-gold.vercel.app/ |
+| **Repositorio (GitHub)** | https://github.com/AlejandroQuintanilla/learning-inventory |
+
 ## Stack tecnológico
 
 | Capa | Tecnología |
